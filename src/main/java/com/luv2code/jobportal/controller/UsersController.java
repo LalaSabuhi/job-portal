@@ -1,14 +1,14 @@
 package com.luv2code.jobportal.controller;
 
-import com.luv2code.jobportal.entity.UsersType;
 import com.luv2code.jobportal.entity.Users;
-import com.luv2code.jobportal.repository.UsersTypeRepository;
-import com.luv2code.jobportal.service.UsersService;
-import com.luv2code.jobportal.service.UsersTypeService;
+import com.luv2code.jobportal.entity.UsersType;
+import com.luv2code.jobportal.services.UsersService;
+import com.luv2code.jobportal.services.UsersTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
 import java.util.List;
 
 @Controller
@@ -42,7 +43,7 @@ public class UsersController {
     public String userRegistration(@Valid Users users) {
         // System.out.println("User:: " + users);
         usersService.addNew(users);
-        return "dashboard";
+        return "redirect:/dashboard/";
     }
 
     @GetMapping("/login")

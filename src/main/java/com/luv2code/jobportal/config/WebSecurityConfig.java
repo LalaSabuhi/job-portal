@@ -1,6 +1,6 @@
 package com.luv2code.jobportal.config;
 
-import com.luv2code.jobportal.service.CustomUserDetailsService;
+import com.luv2code.jobportal.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,16 +12,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.swing.*;
+
 @Configuration
 public class WebSecurityConfig {
+
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-
     @Autowired
-    public WebSecurityConfig(CustomUserDetailsService customUserDetailsService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler){
-        this.customUserDetailsService=customUserDetailsService;
+    public WebSecurityConfig(CustomUserDetailsService customUserDetailsService, CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+        this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
     }
+
     private final String[] publicUrl = {"/",
             "/global-search/**",
             "/register",
@@ -36,32 +39,39 @@ public class WebSecurityConfig {
             "/*.js",
             "/*.js.map",
             "/fonts**", "/favicon.ico", "/resources/**", "/error"};
+
     @Bean
-    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.authenticationProvider(authenticationProvider());
-        http.authorizeHttpRequests(auth-> {
-            auth.requestMatchers(publicUrl).permitAll();//should be permitted without authentication
-            auth.anyRequest().authenticated();//users need to be logged in to access these URLs
+
+        http.authorizeHttpRequests(auth -> {
+            auth.requestMatchers(publicUrl).permitAll();
+            auth.anyRequest().authenticated();
         });
-        http.formLogin(form -> form.loginPage("/login").permitAll().successHandler(customAuthenticationSuccessHandler))
-                .logout(logout -> {
-                    logout.logoutUrl("logout");
+
+        http.formLogin(form->form.loginPage("/login").permitAll()
+                .successHandler(customAuthenticationSuccessHandler))
+                .logout(logout-> {
+                    logout.logoutUrl("/logout");
                     logout.logoutSuccessUrl("/");
                 }).cors(Customizer.withDefaults())
-                .csrf(csrf-> csrf.disable());
-
+                .csrf(csrf->csrf.disable());
 
         return http.build();
     }
+
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
+
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         authenticationProvider.setUserDetailsService(customUserDetailsService);
         return authenticationProvider;
     }
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
