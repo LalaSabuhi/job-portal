@@ -24,11 +24,5 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         if (hasRecruiterRole || hasJobSeekerRole) {
             response.sendRedirect("/dashboard/");
         }
-
-
-    }
-    public boolean isAccountNonExpired() {
-        // TODO Auto-generated method stub
-        return true;
     }
 }
